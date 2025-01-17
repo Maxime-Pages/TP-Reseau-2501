@@ -52,6 +52,8 @@ void setup()
       debugSerial.print((char)NIBBLE_TO_HEX_CHAR(LOW_NIBBLE(DevEUI[i])));
   }
   debugSerial.println();  
+
+  setupLoRa();
 }
 
 void setupLoRa(){
@@ -77,11 +79,10 @@ void setupLoRaOTAA(){
 
 void loop()
 {
-  setupLoRa();
    String reading = getTemperature();
    debugSerial.println(reading);
 
-    switch (LoRaBee.send(2, (uint8_t*)reading.c_str(), reading.length()))
+    switch (LoRaBee.sendReqAck(2, (uint8_t*)reading.c_str(), reading.length(), 1))
     {
     case NoError:
       debugSerial.println("Successful transmission.");
@@ -120,12 +121,7 @@ void loop()
     }
     // Delay between readings
     // 60 000 = 1 minute
-    delay(5000);
-    pinMode(LORA_RESET, OUTPUT);
-    digitalWrite(LORA_RESET, LOW);
-    delay(100);
-    digitalWrite(LORA_RESET, HIGH);
-    delay(1000);
+    delay(10000); 
 }
 
 String getTemperature()
